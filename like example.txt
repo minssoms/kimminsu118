@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
+<title>Untitled Document</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+function update_chu(gbn, no) {
+    //$("#div_chu").html("<img src='indicator.gif'>");
+    var url = "bbschu.php";
+    $.get(url, {gbn:gbn, no:no}, function(args) {
+        $("#div_chu").html(args);
+    });    
+}
+</script>
+</head>
+
+<?
+$gbn = $_REQUEST['gbn'];
+$no = $_REQUEST['no'];
+$conn = mysql_connect("localhost","test","");
+mysql_select_db("test", $conn);
+
+if($gbn == "up") {
+    $sql = "update bbs set chu_up=chu_up+1 where no='$no'";
+    mysql_query($sql);
+} else if($gbn == "down") {
+    $sql = "update bbs set chu_down=chu_down+1 where no='$no'";
+    mysql_query($sql);
+}
+
+$sql = "select * from bbs where no='$no'";
+$res = mysql_query($sql);
+$row = mysql_fetch_array($res);
+
+usleep(300000);
+?>
+
+<span id="div_chu">
+<img src="images/chu_up.png" style="cursor:pointer;" onclick="update_chu('up','<?=$row['no']?>')"><?=$row['chu_up']?> &nbsp;
+<img src="images/chu_down.png" style="cursor:pointer;" onclick="update_chu('down','<?=$row['no']?>')"><?=$row['chu_down']?> &nbsp;
+</span>
